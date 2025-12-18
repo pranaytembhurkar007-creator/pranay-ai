@@ -24,8 +24,7 @@ try:
             )
 
     model = genai.GenerativeModel(st.session_state.final_model)
-    st.sidebar.success(f"Connected to: {st.session_state.final_model}")
-
+    
     # Chat history
     if "messages" not in st.session_state:
         st.session_state.messages = []
