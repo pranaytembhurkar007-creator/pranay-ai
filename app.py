@@ -1,9 +1,14 @@
+
 import streamlit as st
 import google.generativeai as genai
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
+# Purani dotenv aur os wali saari lines hata dein
+# Seedha secrets se configuration karein
+if "GEMINI_API_KEY" in st.secrets:
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+else:
+    st.error("❌ API Key not found in Streamlit Secrets!")
+    st.stop()
 
 st.set_page_config(page_title="AI Coder Fix", page_icon="")
 st.title(" Pranay AI ")
@@ -54,3 +59,4 @@ try:
 
 except Exception as e:
     st.error(f"Error: {e}")
+
