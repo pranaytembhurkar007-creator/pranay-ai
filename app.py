@@ -17,7 +17,7 @@ try:
         ]
 
         if any("gemini-1.5-flash" in m for m in available_models):
-            st.session_state.final_model = "gemini-1.5-flash"
+            st.session_state.final_model = "gemini-1.5-flash , system_instruction=system_instruction"
         else:
             st.session_state.final_model = (
                 available_models[0] if available_models else "gemini-pro"
