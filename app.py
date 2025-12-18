@@ -1,62 +1,45 @@
-
 import streamlit as st
 import google.generativeai as genai
+# import os  <-- Iski zaroorat nahi hai agar hum st.secrets use karein
 
-# Purani dotenv aur os wali saari lines hata dein
-# Seedha secrets se configuration karein
+# 1. Page Config sabse pehle hona chahiye
+st.set_page_config(page_title="AI Coder Fix", page_icon="")
+st.title(" Pranay AI")
+
+# 2. API Configuration (Sirf ek tarika use karein)
 if "GEMINI_API_KEY" in st.secrets:
-    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+    api_key = st.secrets["GEMINI_API_KEY"]
+    genai.configure(api_key=api_key)
 else:
-    st.error("❌ API Key not found in Streamlit Secrets!")
+    st.error("❌ API Key not found! Go to Settings > Secrets and add GEMINI_API_KEY")
     st.stop()
 
-st.set_page_config(page_title="AI Coder Fix", page_icon="")
-st.title(" Pranay AI ")
-
 try:
-    # Gemini API configure
-    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-
-    # Model select logic
+    # 3. Model Select Logic (Simplified)
     if "final_model" not in st.session_state:
-        available_models = [
-            m.name for m in genai.list_models()
-            if "generateContent" in m.supported_generation_methods
-        ]
-
-        if any("gemini-1.5-flash" in m for m in available_models):
-            st.session_state.final_model = "gemini-1.5-flash"
-        else:
-            st.session_state.final_model = (
-                available_models[0] if available_models else "gemini-pro"
-            )
+        st.session_state.final_model = "gemini-1.5-flash"
 
     model = genai.GenerativeModel(st.session_state.final_model)
     st.sidebar.success(f"Connected to: {st.session_state.final_model}")
 
-    # Chat history
+    # 4. Chat History
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
     for msg in st.session_state.messages:
         st.chat_message(msg["role"]).write(msg["content"])
 
-    # User input
+    # 5. User Input
     prompt = st.chat_input("Type your message...")
     if prompt:
-        st.session_state.messages.append(
-            {"role": "user", "content": prompt}
-        )
+        st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
 
-        response = model.generate_content(prompt)
-
-        if response.text:
-            st.session_state.messages.append(
-                {"role": "assistant", "content": response.text}
-            )
-            st.chat_message("assistant").write(response.text)
+        with st.spinner("Thinking..."):
+            response = model.generate_content(prompt)
+            if response.text:
+                st.session_state.messages.append({"role": "assistant", "content": response.text})
+                st.chat_message("assistant").write(response.text)
 
 except Exception as e:
     st.error(f"Error: {e}")
-
