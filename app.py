@@ -1,5 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
+import os
 
 st.set_page_config(page_title="AI Coder Fix", page_icon="")
 st.title(" Pranay AI ")
