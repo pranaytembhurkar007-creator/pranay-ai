@@ -23,8 +23,6 @@ try:
                 available_models[0] if available_models else "gemini-pro"
             )
 
-    model = genai.GenerativeModel(st.session_state.final_model)
-    st.sidebar.success(f"Connected to: {st.session_state.final_model}")
 
     # Chat history
     if "messages" not in st.session_state:
